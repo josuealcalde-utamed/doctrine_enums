@@ -1,5 +1,8 @@
 {
-    "name": "enumeum/doctrine-enums",
+    "name": "josuealcalde-utamed/doctrine-enums",
+    "replace": {
+      "enumenum/doctrine-enums": "self.version"
+    },
     "description": "Doctrine extension to manage enumerations in PostgreSQL",
     "license": "MIT",
     "type": "library",
@@ -15,10 +18,14 @@
         {
             "name": "Alexey Sitka",
             "email": "alexey.sitka@gmail.com"
+        },
+        {
+          "name": "Josué Alcalde",
+          "email": "josue.alcalde@utamed.es"
         }
     ],
     "support": {
-        "email": "alexey.sitka@gmail.com"
+        "email": "josue.alcalde@utamed.es"
     },
     "require": {
         "php": "^8.1",
