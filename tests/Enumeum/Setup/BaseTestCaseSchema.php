@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace EnumeumTests\Setup;
 
 use Doctrine\Common\EventManager;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
@@ -31,7 +32,7 @@ abstract class BaseTestCaseSchema extends BaseTestCase
     ): EntityManager {
         $config = null === $config ? $this->getDefaultConfiguration() : $config;
         $evm = $evm ?: new EventManager();
-        $em = EntityManager::create($params, $config, $evm);
+        $em = new EntityManager(DriverManager::getConnection($params), $config, $evm);
         $evm->addEventSubscriber(new PostGenerateSchemaSubscriber(
             $this->getDefinitionRegistry(),
             $this->getTableColumnRegistry($em->getConnection()),

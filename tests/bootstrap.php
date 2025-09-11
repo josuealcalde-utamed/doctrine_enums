@@ -27,7 +27,10 @@ define('VENDOR_PATH', realpath(dirname(__DIR__) . '/vendor'));
 
 $loader = require dirname(__DIR__) . '/vendor/autoload.php';
 
-AnnotationRegistry::registerLoader([$loader, 'loadClass']);
+// Not available in doctrine/annotations 2.0
+if (method_exists(AnnotationRegistry::class, 'registerLoader')) {
+    AnnotationRegistry::registerLoader([$loader, 'loadClass']);
+}
 
 $reader = new AnnotationReader();
 $reader = new PsrCachedReader($reader, new ArrayAdapter());

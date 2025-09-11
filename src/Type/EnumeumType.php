@@ -36,7 +36,7 @@ class EnumeumType extends Type
         return $this->name;
     }
 
-    public function getMappedDatabaseTypes(AbstractPlatform $platform): iterable
+    public function getMappedDatabaseTypes(AbstractPlatform $platform): array
     {
         return [$this->name];
     }

@@ -15,6 +15,6 @@ services:
     ports:
       - 12000:5432
     environment:
-      POSTGRES_DB: enum_testing
+      POSTGRES_DB: enum_user
       POSTGRES_USER: enum_user
       POSTGRES_PASSWORD: enum_password

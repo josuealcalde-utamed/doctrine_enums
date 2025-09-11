@@ -75,8 +75,11 @@ class PostGenerateSchemaSubscriber implements EventSubscriber
             return $column->getPlatformOption('enumType');
         }
 
-        if ($column->hasCustomSchemaOption('enumType')) {
-            return $column->getCustomSchemaOption('enumType');
+        if (method_exists($column, 'hasCustomSchemaOption')) {
+            // For Doctrine DBAL <3.0
+            if ($column->hasCustomSchemaOption('enumType')) {
+                return $column->getCustomSchemaOption('enumType');
+            }
         }
 
         return null;
