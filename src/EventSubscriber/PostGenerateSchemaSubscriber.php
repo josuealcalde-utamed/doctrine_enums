@@ -14,11 +14,11 @@ namespace Enumeum\DoctrineEnum\EventSubscriber;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\DBAL\Platforms\PostgreSQLPlatform;
 use Doctrine\DBAL\Schema\Column;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\Tools\Event\GenerateSchemaEventArgs;
 use Doctrine\ORM\Tools\ToolEvents;
 use Enumeum\DoctrineEnum\Definition\DefinitionRegistry;
 use Enumeum\DoctrineEnum\EnumUsage\TableColumnRegistry;
-use Enumeum\DoctrineEnum\Type\CastingEnumeumType;
 use Enumeum\DoctrineEnum\Type\EnumeumType;
 
 class PostGenerateSchemaSubscriber implements EventSubscriber
@@ -53,19 +53,31 @@ class PostGenerateSchemaSubscriber implements EventSubscriber
                 }
 
                 if ($definition = $this->registry->getDefinitionByEnum($enumType)) {
-                    $genericType = EnumeumType::create($definition->name);
+                    $this->registerType($definition->name);
 
                     if ($this->columnRegistry->isColumnExists($table->getName(), $column->getName())) {
                         $currentType = $this->columnRegistry->getColumnType($table->getName(), $column->getName());
                         if ($currentType !== $definition->name) {
-                            $genericType = CastingEnumeumType::create($definition->name);
-                            $genericType->castColumn($column->getName());
+                            $column->setPlatformOption(EnumeumType::CAST_OPTION, true);
                         }
                     }
 
-                    $column->setType($genericType);
+                    // DBAL >= 4.5 resuelve el tipo por nombre; una instancia nueva no está en el registro.
+                    if (method_exists($column, 'setTypeName')) {
+                        $column->setTypeName($definition->name);
+                    } else {
+                        $column->setType(Type::getType($definition->name));
+                    }
                 }
             }
+        }
+    }
+
+    private function registerType(string $name): void
+    {
+        $registry = Type::getTypeRegistry();
+        if (!$registry->has($name)) {
+            $registry->register($name, EnumeumType::create($name));
         }
     }
 
