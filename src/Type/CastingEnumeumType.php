@@ -15,6 +15,10 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 use function sprintf;
 
+/**
+ * @deprecated Los tipos se resuelven por nombre en DBAL >= 4.5, por lo que no pueden llevar estado por columna.
+ *             Usar la platform option {@see EnumeumType::CAST_OPTION}.
+ */
 class CastingEnumeumType extends EnumeumType
 {
     private const CAST_EXPRESSION = '%1$s USING %2$s::text::%1$s';

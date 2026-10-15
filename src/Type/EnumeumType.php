@@ -14,8 +14,15 @@ namespace Enumeum\DoctrineEnum\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 
+use function sprintf;
+
 class EnumeumType extends Type
 {
+    /** Platform option que indica que hay que convertir desde el tipo anterior de la columna (`USING col::text::enum`). */
+    public const CAST_OPTION = 'enumeumCast';
+
+    private const CAST_EXPRESSION = '%1$s USING %2$s::text::%1$s';
+
     private string $name;
 
     public function getName(): string
@@ -33,6 +40,10 @@ class EnumeumType extends Type
 
     public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
+        if (!empty($column[self::CAST_OPTION]) && isset($column['name'])) {
+            return sprintf(self::CAST_EXPRESSION, $this->name, $column['name']);
+        }
+
         return $this->name;
     }
 
